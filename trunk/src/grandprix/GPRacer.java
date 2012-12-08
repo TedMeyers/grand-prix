@@ -266,6 +266,11 @@ public class GPRacer implements GPConstants {
    myResults.remove(key);
  }
 
+ public int getHeatCount() {
+   int cnt = myResults.size();
+   return cnt;
+ }
+
  public double getSpeedScore() {
    double score = 0;
    for (GPResult result : myResults.values()) {

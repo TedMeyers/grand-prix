@@ -32,13 +32,14 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
   private boolean myIsThird = false;
   private boolean myIsFourth = false;
   private boolean myIsValid = false;
+  private boolean myIsRaced = false;
 
 
   public GPResult(String[] token) {
     parseCSV(token);
   }
 
-  public GPResult(int heat, int lane, double time, int place, int car, String clas) {
+  public GPResult(int heat, int lane, double time, int place, int car, String clas, boolean isRaced) {
     myHeat = heat;
     myLane = lane;
     myTime = time;
@@ -47,10 +48,12 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
     myCar = car;
     myClass = clas;
     myIsValid = (myTime != MAX_TIME);
+    myIsRaced = isRaced;
   }
 
   public GPResult(int heat, int lane, int car, String clas) {
    myIsValid = false;
+   myIsRaced = false;
    myHeat = heat;
    myLane = lane;
    myCar = car;
@@ -81,6 +84,7 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
    */
   public void parseResultsRM(String[] results) {
 	  myIsValid = false;
+	  myIsRaced = true;
 	  myTime = MAX_TIME;
 	  myPlaceNum = LAST_PLACE;
 	  mySpeedScore = 0;
@@ -134,10 +138,11 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
 	    myPlaceNum = LAST_PLACE;
 	    int primaryPlace = NONE_PLACE;
 	    int beg = myLane * RESULTS_R_WIDTH + start + 2;
-	    myIsFirst = (result.charAt(beg + RESULTS_N_WIDTH) == FIRST_CHAR);
-	    myIsSecond = (result.charAt(beg + RESULTS_N_WIDTH) == SECOND_CHAR);
-	    myIsThird = (result.charAt(beg + RESULTS_N_WIDTH) == THIRD_CHAR);
-	    myIsFourth = (result.charAt(beg + RESULTS_N_WIDTH) == FOURTH_CHAR);
+	    char resultChar = result.charAt(beg + RESULTS_N_WIDTH);
+	    myIsFirst = (resultChar == FIRST_CHAR);
+	    myIsSecond = (resultChar == SECOND_CHAR);
+	    myIsThird = (resultChar == THIRD_CHAR);
+	    myIsFourth = (resultChar == FOURTH_CHAR);
 	    if (myIsFirst) primaryPlace = FIRST_PLACE;
 	    if (myIsSecond) primaryPlace = SECOND_PLACE;
 	    if (myIsThird) primaryPlace = THIRD_PLACE;
@@ -146,6 +151,7 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
 	    String timeStr = result.substring(beg, beg + RESULTS_N_WIDTH);
 	    myTime = Double.parseDouble(timeStr);
 	    myIsValid = true;
+	    myIsRaced = true;
 	    if (myTime == MIN_TIME) {
 	      myTime = MAX_TIME;
 	      primaryPlace = LAST_PLACE;
@@ -193,6 +199,10 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
  public boolean isValid() {
 	 return myIsValid;
  }
+
+ public boolean isRaced() {
+	 return myIsRaced;
+ }
  
  public int getLane() {
    return myLane;
@@ -214,10 +224,11 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
     return mySpeedScore;
   }
 
-  public void set(double time, int score) {
+  public void set(double time, int score, boolean isRaced) {
     myTime = time;
     mySpeedScore = RESULTS_SCORE_MULT * score;
     myIsValid = (myTime != MAX_TIME);
+    myIsRaced = isRaced;
   }
 
   public int hashCode() {
@@ -251,8 +262,10 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
       myClass = token[7].trim();
       myCar = Integer.parseInt(token[8].trim());
       myIsValid = true;
+      myIsRaced = true;
     } else {
       myIsValid = false;
+      myIsRaced = false;
     }
   }
 
@@ -266,7 +279,7 @@ public class GPResult implements Comparable<GPResult>, GPConstants {
     return "heat: " + myHeat + " lane: " + myLane +
            " time: " + myTime + " place: " + myPlaceNum + " "  + 
            " score: " + getSpeedScore() + "class: " + myClass +
-           "  car: " + myCar + " valid: " + myIsValid;
+           "  car: " + myCar + " valid: " + myIsValid + " raced: " + myIsRaced;
   }
 
 

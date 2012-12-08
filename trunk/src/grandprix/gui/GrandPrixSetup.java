@@ -507,6 +507,7 @@ public class GrandPrixSetup extends JPanel implements SerialPortEventListener, C
     	  resetTimerRM();
       }
     } catch (Exception ex) {
+    	System.out.println("Comm Port Error: " + ex);
       ex.printStackTrace();
     }
   }
@@ -565,11 +566,11 @@ public class GrandPrixSetup extends JPanel implements SerialPortEventListener, C
    */
   public synchronized void readResultsRM() {
     try {
-      while (myBufreader.ready()) {
+      while (!mySerial.getStopRead() && myBufreader.ready()) {
     	  // Hopefully, read the Header line
 	      String line = "";
 	      boolean done = false;
-	      while (!done) {
+	      while (!done && !mySerial.getStopRead()) {
 	    	  String c = "" + (char)myBufreader.read();
 	    	  if (c.matches("[a-zA-Z0-9 ]")) {
 	    		  line += c;
@@ -591,7 +592,7 @@ public class GrandPrixSetup extends JPanel implements SerialPortEventListener, C
 		  while (!finished) {
     		  line = "";
 		      done = false;
-		      while (!done && !finished) {
+		      while (!done && !finished && !mySerial.getStopRead()) {
 		    	  String c = "" + (char)myBufreader.read();
 		    	  if (c.matches("[a-zA-Z0-9.: ]")) line += c;
 	    		  done = line.matches(".*Place.*Number.*Second.*\\d\\.\\d\\d\\d\\d");
@@ -652,7 +653,7 @@ public class GrandPrixSetup extends JPanel implements SerialPortEventListener, C
     try {
       String line = "";
       while (true) {
-    	  if (myBufreader.ready()) {
+    	  if (!mySerial.getStopRead() && myBufreader.ready()) {
     		  int c = myBufreader.read();
     		  if (c == '\n') {
     			  break;
@@ -680,7 +681,7 @@ public class GrandPrixSetup extends JPanel implements SerialPortEventListener, C
         	}
         }
       }
-      if (myBufreader.ready()) { 
+      if (!mySerial.getStopRead() && myBufreader.ready()) { 
     	  readResultsFT();
       }
     } catch (IOException e) {
@@ -724,7 +725,7 @@ public class GrandPrixSetup extends JPanel implements SerialPortEventListener, C
   }
   
   public void clearInputStream() throws IOException {
-	  while (myBufreader.ready()) {
+	  while (!mySerial.getStopRead() && myBufreader.ready()) {
 		  char[] cbuf = new char[1024];
 		  myBufreader.read(cbuf);
 	  }

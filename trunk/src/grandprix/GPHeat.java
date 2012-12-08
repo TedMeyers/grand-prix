@@ -55,7 +55,7 @@ public class GPHeat implements GPConstants {
   public void clearAllResults() {
     if (myResults != null) {
       for (int i = 0; i < NUM_LANES; i++) {
-    	if (myResults[i] != null) myResults[i].set(MAX_TIME, 0);
+    	if (myResults[i] != null) myResults[i].set(MAX_TIME, 0, false);
         myResults[i] = null;
       }
     }

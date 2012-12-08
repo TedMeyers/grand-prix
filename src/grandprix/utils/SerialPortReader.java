@@ -26,10 +26,11 @@ import java.util.TooManyListenersException;
  * Class declaration
  */
 public class SerialPortReader  {
+  private static final Object stopReadMutex =  new Object();
+  public static boolean stopRead = false;
 
   private InputStream myInputStream = null;
   private SerialPort mySerialPort = null;
-
 
   /**
    *
@@ -99,7 +100,9 @@ public static Enumeration<CommPortIdentifier> getPortList()
       mySerialPort.setSerialPortParams(baud, bits, stop, parity);
       //mySerialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_OUT);
       mySerialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
-
+      //mySerialPort.enableReceiveTimeout(10);
+      
+      synchronized(stopReadMutex) {stopRead = false;}
       myInputStream = mySerialPort.getInputStream();
 
     } catch (UnsupportedCommOperationException e) {
@@ -110,6 +113,18 @@ public static Enumeration<CommPortIdentifier> getPortList()
       System.out.println("Unable to open serial port");
       throw new Exception();
     }
+  }
+  
+  void disconnect ( String portName ) throws Exception {
+	// preparing inStream and outStream to deactivate before close
+
+	synchronized(stopReadMutex) {stopRead = true;}
+	myInputStream.close();
+    mySerialPort.close();
+  }
+
+ public boolean getStopRead() {
+	  return stopRead;
   }
 
 

@@ -81,8 +81,9 @@ public class GPInputFile implements GPConstants  {
             s = s.substring(0, i);
           }
           s = s.trim();
+          boolean isComment = s.startsWith("!");
 
-          if (!"".equals(s)) {
+          if (!"".equals(s) && !isComment) {
             GPRacer racer = new GPRacer(s);
             if (racer.getValid()) {
               cars.add(racer);

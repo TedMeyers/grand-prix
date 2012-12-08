@@ -43,6 +43,7 @@ public class GrandPrix {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     }
     catch(Exception e) {
+      System.out.println("ERROR: " + e);
       e.printStackTrace();
     }
     new GrandPrix();

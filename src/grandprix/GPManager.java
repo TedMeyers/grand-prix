@@ -613,10 +613,11 @@ public boolean applyHeats() {
 
       if (racer == null) {
         race.setCar(i, -1);
-        race.setName(i, "");
+        race.setName(i, "", false);
       } else {
+    	int num = racer.getHeatCount();
         race.setCar(i, racer.getCar());
-        race.setName(i, racer.getName());
+        race.setName(i, racer.getName(), (num >= 3));
       }
 
       if (nracer != null) {
@@ -996,9 +997,10 @@ public boolean applyHeats() {
 
     clearResults();
 
+    BufferedReader in = null;
     try {
       FileReader reader = new FileReader(file);
-      BufferedReader in = new BufferedReader(reader);
+      in = new BufferedReader(reader);
       while (in.ready()) {
         String s = in.readLine();
 
@@ -1014,6 +1016,14 @@ public boolean applyHeats() {
       System.out.println("GPManager - FILE NOT FOUND: " + file);
     } catch (IOException ioex) {
       System.out.println("IOException: " + ioex);
+    } finally {
+    	if (in != null) {
+    		try {
+    			in.close();
+    		} catch (IOException ex) {
+    			// Not much to do really
+    		}
+    	}
     }
     showResults();
 

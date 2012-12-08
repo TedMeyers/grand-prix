@@ -121,9 +121,14 @@ public class GrandPrixRace extends JPanel implements GPConstants {
     myCars[lane].setText(str);
   }
 
-  public void setName(int lane, String name) {
+  public void setName(int lane, String name, boolean isLast) {
     String str = " " + name;
     myNames[lane].setText(str);
+    if (isLast) {
+    	myNames[lane].setForeground(Color.RED);
+    } else {
+    	myNames[lane].setForeground(Color.BLACK);
+    }
   }
 
   public void setHeat(int heat) {
